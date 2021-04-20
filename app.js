@@ -25,7 +25,7 @@ app.use("/feed", feedRoutes);
 mongoose.set("useNewUrlParser", true);
 mongoose.set("useUnifiedTopology", true);
 mongoose
-  .connect(process.env.MONGODB_URI)
+  .connect(process.env.MONGODB_MESSAGES_URI)
   .then((result) => {
     app.listen(3090, () => console.log("Express App started!!!"));
   })
