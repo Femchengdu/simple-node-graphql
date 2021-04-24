@@ -4,6 +4,7 @@ const path = require("path");
 const express = require("express");
 const { json: bodyParserJson } = require("body-parser");
 const feedRoutes = require("./routes/feed");
+const authRoutes = require("./routes/auth");
 const mongoose = require("mongoose");
 const multer = require("multer");
 const app = express();
@@ -45,11 +46,12 @@ app.use((req, res, next) => {
   next();
 });
 app.use("/feed", feedRoutes);
+app.use("/auth", authRoutes);
 // Error handling middleware
 app.use((error, req, res, next) => {
   console.log(error);
-  const { statusCode, message } = error;
-  res.status(statusCode || 500).json({ message });
+  const { statusCode, message, data } = error;
+  res.status(statusCode || 500).json({ message, data });
 });
 mongoose.set("useNewUrlParser", true);
 mongoose.set("useUnifiedTopology", true);
