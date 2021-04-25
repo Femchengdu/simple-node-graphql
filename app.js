@@ -55,6 +55,7 @@ app.use((error, req, res, next) => {
 });
 mongoose.set("useNewUrlParser", true);
 mongoose.set("useUnifiedTopology", true);
+mongoose.set("useFindAndModify", false);
 mongoose
   .connect(process.env.MONGODB_MESSAGES_URI)
   .then((result) => {
