@@ -2,7 +2,7 @@ const express = require("express");
 const { body } = require("express-validator");
 
 const User = require("../models/user");
-const { putSignup } = require("../controllers/auth");
+const { putSignup, postLogin } = require("../controllers/auth");
 const router = express.Router();
 
 router.put(
@@ -24,4 +24,6 @@ router.put(
   ],
   putSignup
 );
+
+router.post("/login", postLogin);
 module.exports = router;
