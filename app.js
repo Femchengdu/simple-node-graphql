@@ -59,6 +59,13 @@ mongoose.set("useFindAndModify", false);
 mongoose
   .connect(process.env.MONGODB_MESSAGES_URI)
   .then((result) => {
-    app.listen(3090, () => console.log("Express App started!!!"));
+    const server = app.listen(3090, () =>
+      console.log("Express App started!!!")
+    );
+    // Setup socket.io
+    const io = require("socket.io")(server);
+    io.on("connection", (socket) => {
+      console.log("Client connected");
+    });
   })
   .catch((error) => console.log(error));
