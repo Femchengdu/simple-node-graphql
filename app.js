@@ -43,6 +43,7 @@ app.use((req, res, next) => {
     "GET, POST, PUT, PATCH, DELETE"
   );
   res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
+  //res.setHeader("Access-Control-Allow-Headers", "Content-Type, XMLHttpRequest");
   next();
 });
 app.use("/feed", feedRoutes);
@@ -62,8 +63,14 @@ mongoose
     const server = app.listen(3090, () =>
       console.log("Express App started!!!")
     );
+
     // Setup socket.io
-    const io = require("socket.io")(server);
+    const io = require("socket.io")(server, {
+      cors: {
+        origin: "http://localhost:3000",
+        //methods: ["GET", "POST"]
+      },
+    });
     io.on("connection", (socket) => {
       console.log("Client connected");
     });
