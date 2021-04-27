@@ -3,8 +3,9 @@ dotenv.config();
 const path = require("path");
 const express = require("express");
 const { json: bodyParserJson } = require("body-parser");
-const feedRoutes = require("./routes/feed");
-const authRoutes = require("./routes/auth");
+const { graphqlHTTP } = require("express-graphql");
+const graphqlSchema = require("./graphql/schema");
+const graphqlResolver = require("./graphql/resolvers");
 const mongoose = require("mongoose");
 const multer = require("multer");
 const app = express();
@@ -43,12 +44,20 @@ app.use((req, res, next) => {
     "GET, POST, PUT, PATCH, DELETE"
   );
   res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
-  //res.setHeader("Access-Control-Allow-Headers", "Content-Type, XMLHttpRequest");
+
   next();
 });
-app.use("/feed", feedRoutes);
-app.use("/auth", authRoutes);
-// Error handling middleware
+
+// GraphQl
+app.use(
+  "/graphql",
+  graphqlHTTP({
+    schema: graphqlSchema,
+    rootValue: graphqlResolver,
+  })
+);
+
+// Error handler
 app.use((error, req, res, next) => {
   console.log(error);
   const { statusCode, message, data } = error;
@@ -60,14 +69,6 @@ mongoose.set("useFindAndModify", false);
 mongoose
   .connect(process.env.MONGODB_MESSAGES_URI)
   .then((result) => {
-    const server = app.listen(3090, () =>
-      console.log("Express App started!!!")
-    );
-
-    // Setup socket.io
-    const io = require("./socket").init(server);
-    io.on("connection", (socket) => {
-      console.log("Client connected");
-    });
+    app.listen(3090, () => console.log("Express App started!!!"));
   })
   .catch((error) => console.log(error));
