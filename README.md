@@ -1,4 +1,4 @@
-# Simple Node RESTAPI
+# Simple Node GraphQL API
 
 ## Features
 
@@ -8,4 +8,4 @@
 
 ### Cors configures to allow access from anywhere
 
-### TODO
+### Setup GraphQl initial endpoint
