@@ -55,6 +55,22 @@ app.use(
     schema: graphqlSchema,
     rootValue: graphqlResolver,
     graphiql: true,
+    customFormatErrorFn: (error) => {
+      if (!error.originalError) {
+        return error;
+      }
+
+      const {
+        originalError: { data, code },
+        message,
+      } = error;
+
+      return {
+        status: code,
+        message: message ? message : "An error occured",
+        data,
+      };
+    },
   })
 );
 
