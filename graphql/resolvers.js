@@ -5,6 +5,7 @@ const validator = require("validator");
 module.exports = {
   createUser: async ({ userInput }, req) => {
     const { email, name, password } = userInput;
+
     const errors = [];
     if (!validator.isEmail(email)) {
       errors.push({ message: "E-mail is invalid" });
