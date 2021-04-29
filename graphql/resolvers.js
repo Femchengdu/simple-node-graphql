@@ -70,7 +70,6 @@ module.exports = {
     return { token, userId: user._id.toString() };
   },
   createPost: async ({ postInput }, req) => {
-    console.log("Do I receive the post input?", postInput);
     if (!req.isAuth) {
       const error = new Error("Not authenticated!!");
       error.code = 401;
@@ -117,5 +116,28 @@ module.exports = {
       createdAt: createdAt.toISOString(),
       updatedAt: updatedAt.toISOString(),
     };
+  },
+  posts: async (args, req) => {
+    if (!req.isAuth) {
+      const error = new Error("Not authenticated!!");
+      error.code = 401;
+      throw error;
+    }
+
+    const totalPosts = await Post.find().countDocuments();
+    const rawPosts = await Post.find()
+      .sort({ createdAt: -1 })
+      .populate("creator");
+    const posts = rawPosts.map((pst) => {
+      const { _doc, _id, createdAt, updatedAt } = pst;
+      return {
+        ..._doc,
+        _id: _id.toString(),
+        createdAt: createdAt.toISOString(),
+        updatedAt: updatedAt.toISOString,
+      };
+    });
+
+    return { posts, totalPosts };
   },
 };
