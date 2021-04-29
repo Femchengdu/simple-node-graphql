@@ -146,4 +146,79 @@ module.exports = {
 
     return { posts, totalPosts };
   },
+  post: async ({ id }, req) => {
+    if (!req.isAuth) {
+      const error = new Error("Not authenticated!!");
+      error.code = 401;
+      throw error;
+    }
+
+    const post = await Post.findById(id).populate("creator");
+    if (!post) {
+      const error = new Error("No post found!!");
+      error.code = 404;
+      throw error;
+    }
+
+    const { _doc, _id, createdAt, updatedAt } = post;
+    return {
+      ..._doc,
+      _id: _id.toString(),
+      createdAt: createdAt.toISOString(),
+      updatedAt: updatedAt.toISOString,
+    };
+  },
+  updatePost: async ({ id, postInput }, req) => {
+    if (!req.isAuth) {
+      const error = new Error("Not authenticated!!");
+      error.code = 401;
+      throw error;
+    }
+
+    const post = await Post.findById(id).populate("creator");
+    if (!post) {
+      const error = new Error("No post found!!");
+      error.code = 404;
+      throw error;
+    }
+
+    if (post.creator._id.toString() !== req.userId.toString()) {
+      const error = new Error("Invalid operation!!");
+      error.code = 403;
+      throw error;
+    }
+
+    const { title, content, imageUrl } = postInput;
+    const errors = [];
+    if (validator.isEmpty(title) || !validator.isLength(title, { min: 5 })) {
+      errors.push({ message: "Title is invalid!!!" });
+    }
+    if (
+      validator.isEmpty(content) ||
+      !validator.isLength(content, { min: 5 })
+    ) {
+      errors.push({ message: "Content is invalid!!!" });
+    }
+
+    if (errors.length > 0) {
+      const error = new Error("Invalid input!!");
+      error.data = errors;
+      error.code = 422;
+      throw error;
+    }
+    post.title = title;
+    post.content = content;
+    if (imageUrl !== "undefined") {
+      post.imageUrl = imageUrl;
+    }
+
+    const updatedPost = await post.save();
+    const { _doc, _id, createdAt, updatedAt } = updatedPost;
+    return {
+      ..._doc,
+      _id: _id.toString(),
+      createdAt: createdAt.toISOString(),
+      updatedAt: updatedAt.toISOString,
+    };
+  },
 };
