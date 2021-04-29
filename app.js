@@ -1,6 +1,7 @@
 const dotenv = require("dotenv");
 dotenv.config();
 const path = require("path");
+const fs = require("fs");
 const express = require("express");
 const { json: bodyParserJson } = require("body-parser");
 const { graphqlHTTP } = require("express-graphql");
@@ -53,6 +54,23 @@ app.use((req, res, next) => {
 
 app.use(auth);
 
+// work around fro graphql
+app.put("/post-image", (req, res, next) => {
+  if (!req.isAuth) {
+    throw new Error("Not authenticated");
+  }
+  if (!req.file) {
+    return res.status(200).json({ message: "No file provided" });
+  }
+  if (req.body.oldPath) {
+    clearImage(oldPath);
+  }
+
+  return res
+    .status(201)
+    .json({ message: "File saved!!!", imageUrl: req.file.path });
+});
+
 // GraphQl
 app.use(
   "/graphql",
@@ -94,3 +112,8 @@ mongoose
     app.listen(3090, () => console.log("Express App started!!!"));
   })
   .catch((error) => console.log(error));
+
+const clearImage = (imagePath) => {
+  const filePath = path.join(__dirname, "..", imagePath);
+  fs.unlink(filePath, (error) => console.log(error));
+};
