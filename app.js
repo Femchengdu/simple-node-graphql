@@ -1,7 +1,7 @@
 const dotenv = require("dotenv");
 dotenv.config();
 const path = require("path");
-const fs = require("fs");
+const clearImage = require("./utils/file");
 const express = require("express");
 const { json: bodyParserJson } = require("body-parser");
 const { graphqlHTTP } = require("express-graphql");
@@ -112,8 +112,3 @@ mongoose
     app.listen(3090, () => console.log("Express App started!!!"));
   })
   .catch((error) => console.log(error));
-
-const clearImage = (imagePath) => {
-  const filePath = path.join(__dirname, "..", imagePath);
-  fs.unlink(filePath, (error) => console.log(error));
-};
