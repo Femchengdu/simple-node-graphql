@@ -2,7 +2,7 @@ const dotenv = require("dotenv");
 dotenv.config();
 const path = require("path");
 const fs = require("fs");
-//const https = require("https");
+
 const clearImage = require("./utils/file");
 const express = require("express");
 const { json: bodyParserJson } = require("body-parser");
@@ -14,8 +14,7 @@ const mongoose = require("mongoose");
 const multer = require("multer");
 const helmet = require("helmet");
 const compression = require("compression");
-const morgan = require("morgan");
-//const csrf = require("csurf");
+
 const app = express();
 
 // const tlsOptions = {
@@ -50,7 +49,7 @@ const stream = fs.createWriteStream(path.join(__dirname, "access.logs"), {
 
 app.use(helmet());
 app.use(compression());
-app.use(morgan("combined", { stream }));
+//app.use(morgan("combined", { stream }));
 
 app.use(bodyParserJson());
 app.use(multer({ storage, fileFilter }).single("image"));
