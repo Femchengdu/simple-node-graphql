@@ -2,3 +2,6 @@ learningProjects.txt
 node_modules
 learnings.md
 .env
+access.logs 
+server.cert
+server.key
