@@ -2,7 +2,7 @@ const dotenv = require("dotenv");
 dotenv.config();
 const path = require("path");
 const fs = require("fs");
-const https = require("https");
+//const https = require("https");
 const clearImage = require("./utils/file");
 const express = require("express");
 const { json: bodyParserJson } = require("body-parser");
@@ -18,8 +18,10 @@ const morgan = require("morgan");
 //const csrf = require("csurf");
 const app = express();
 
-const key = fs.readFileSync("server.key");
-const cert = fs.readFileSync("server.cert");
+// const tlsOptions = {
+//   key: fs.readFileSync("server.key"),
+//   cert: fs.readFileSync("server.cert"),
+// };
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, "images");
@@ -54,6 +56,7 @@ app.use(bodyParserJson());
 app.use(multer({ storage, fileFilter }).single("image"));
 // Serve static file using experss middleware
 app.use("/images", express.static(path.join(__dirname, "images")));
+app.use(express.static(path.join(__dirname, "frontend")));
 // Set Cors headers
 app.use((req, res, next) => {
   res.setHeader("Access-Control-Allow-Origin", "*");
@@ -61,6 +64,7 @@ app.use((req, res, next) => {
     "Access-Control-Allow-Methods",
     "GET, POST, PUT, PATCH, DELETE"
   );
+  //res.setHeader("Content-Security-Policy", "script-src 'self'");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
   if (req.method === "OPTIONS") {
     return res.sendStatus(200);
@@ -125,9 +129,9 @@ mongoose.set("useFindAndModify", false);
 mongoose
   .connect(process.env.MONGODB_MESSAGES_URI)
   .then((result) => {
-    //app.listen(3090, () => console.log("Express App started!!!"));
-    https
-      .createServer({ key, cert }, app)
-      .listen(3090, () => console.log("Express App started!!!"));
+    app.listen(3090, () => console.log("Express App started!!!"));
+    // https
+    //   .createServer(tlsOptions, app)
+    //   .listen(3090, () => console.log("Express App started!!!"));
   })
   .catch((error) => console.log(error));
