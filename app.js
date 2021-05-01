@@ -129,7 +129,9 @@ mongoose.set("useFindAndModify", false);
 mongoose
   .connect(process.env.MONGODB_MESSAGES_URI)
   .then((result) => {
-    app.listen(3090, () => console.log("Express App started!!!"));
+    app.listen(process.env.PORT || 3090, () =>
+      console.log("Express App started!!!")
+    );
     // https
     //   .createServer(tlsOptions, app)
     //   .listen(3090, () => console.log("Express App started!!!"));
