@@ -1,6 +1,8 @@
 const dotenv = require("dotenv");
 dotenv.config();
 const path = require("path");
+const fs = require("fs");
+const https = require("https");
 const clearImage = require("./utils/file");
 const express = require("express");
 const { json: bodyParserJson } = require("body-parser");
@@ -10,8 +12,14 @@ const graphqlResolver = require("./graphql/resolvers");
 const auth = require("./middleware/isAuth");
 const mongoose = require("mongoose");
 const multer = require("multer");
+const helmet = require("helmet");
+const compression = require("compression");
+const morgan = require("morgan");
+//const csrf = require("csurf");
 const app = express();
 
+const key = fs.readFileSync("server.key");
+const cert = fs.readFileSync("server.cert");
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, "images");
@@ -33,6 +41,14 @@ const fileFilter = (req, file, cb) => {
     cb(null, false);
   }
 };
+
+const stream = fs.createWriteStream(path.join(__dirname, "access.logs"), {
+  flags: "a",
+});
+
+app.use(helmet());
+app.use(compression());
+app.use(morgan("combined", { stream }));
 
 app.use(bodyParserJson());
 app.use(multer({ storage, fileFilter }).single("image"));
@@ -109,6 +125,9 @@ mongoose.set("useFindAndModify", false);
 mongoose
   .connect(process.env.MONGODB_MESSAGES_URI)
   .then((result) => {
-    app.listen(3090, () => console.log("Express App started!!!"));
+    //app.listen(3090, () => console.log("Express App started!!!"));
+    https
+      .createServer({ key, cert }, app)
+      .listen(3090, () => console.log("Express App started!!!"));
   })
   .catch((error) => console.log(error));
