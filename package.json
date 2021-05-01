@@ -1,4 +1,8 @@
 {
+  "name": "nodegrphql",
+  "version": "1.0.0",
+  "description": "Testing graphql",
+  "main": "app.js",
   "scripts": {
     "start": "nodemon app.js"
   },
@@ -23,5 +27,7 @@
   },
   "devDependencies": {
     "nodemon": "^2.0.7"
-  }
+  },
+  "author": "rdev",
+  "license": "MIT"
 }
