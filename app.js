@@ -56,7 +56,7 @@ app.use(bodyParserJson());
 app.use(multer({ storage, fileFilter }).single("image"));
 // Serve static file using experss middleware
 app.use("/images", express.static(path.join(__dirname, "images")));
-app.use(express.static(path.join(__dirname, "frontend")));
+app.use(express.static(path.join(__dirname, "build")));
 // Set Cors headers
 app.use((req, res, next) => {
   res.setHeader("Access-Control-Allow-Origin", "*");
