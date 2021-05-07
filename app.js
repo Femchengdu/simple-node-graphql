@@ -53,9 +53,7 @@ app.use(compression());
 
 app.use(bodyParserJson());
 app.use(multer({ storage, fileFilter }).single("image"));
-// Serve static file using experss middleware
-app.use("/images", express.static(path.join(__dirname, "images")));
-//app.use(express.static(path.join(__dirname, "build")));
+
 // Set Cors headers
 app.use((req, res, next) => {
   res.setHeader("Access-Control-Allow-Origin", "*");
@@ -63,13 +61,21 @@ app.use((req, res, next) => {
     "Access-Control-Allow-Methods",
     "GET, POST, PUT, PATCH, DELETE"
   );
-  //res.setHeader("Content-Security-Policy", "script-src 'self'");
+  res.setHeader(
+    "Content-Security-Policy",
+    "script-src-elem https://node-grapql-api.herokuapp.com/static/js/1.e8ecc897.chunk.js https://node-grapql-api.herokuapp.com/static/js/main.f0021eac.chunk.js 'unsafe-inline'"
+  );
   res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
+
   if (req.method === "OPTIONS") {
     return res.sendStatus(200);
   }
   next();
 });
+
+// Serve static file using experss middleware
+app.use("/images", express.static(path.join(__dirname, "images")));
+app.use(express.static(path.join(__dirname, "frontend")));
 
 app.use(auth);
 
